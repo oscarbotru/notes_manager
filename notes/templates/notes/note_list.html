@@ -1,5 +1,5 @@
 {% extends 'notes/base.html' %}
-
+{% load i18n %}
 {% block ext_css %}
     {% load static %}
     <!-- jquery.vectormap css -->
@@ -18,66 +18,63 @@
 
 {% block content %}
     <div class="card">
-        <div class="card-header">
-            <a href="{% url 'notes:create' %}" class="btn btn-primary float-right">
-                Добавить заметку
-            </a>
-            <h4 class="card-title">Список заметок</h4>
+    <div class="card-header">
+        <a href="{% url 'notes:create' %}" class="btn btn-primary float-right">
+            Добавить заметку
+        </a>
+        <h4 class="card-title">Список заметок</h4>
+    </div>
+    <div class="card-header border-bottom">
+        <div class="float-end form-group form-inline row me-1">
+            <div class="col-2">
+                <div class="input-group">
+                    <input type="date" class="form-control" name="date-from">
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="input-group">
+                    <input type="date" class="form-control" name="date-to">
+                </div><!-- input-group -->
+            </div>
+            <div class="col-2">
+                <div class="input-group">
+                    <select class="form-control" name="published">
+                        <option value="-1">Все</option>
+                        <option value="1">Опубликовано</option>
+                        <option value="0">Не опубликовано</option>
+                    </select>
+                </div><!-- input-group -->
+            </div>
+            <div class="col-2">
+                <div class="input-group" id="date-to">
+                    <select class="form-control" name="favorites">
+                        <option value="-1">Все</option>
+                        <option value="0">В избранном</option>
+                        <option value="1">Не в избранном</option>
+                    </select>
+                </div><!-- input-group -->
+            </div>
+            <div class="col-2">
+                <div class="input-group" id="date-to">
+                    <select class="form-control" name="category">
+                        <option value="0">Все категории</option>
+                        {% for category in categories %}
+                            <option value="{{ category.pk }}">{{ category.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div><!-- input-group -->
+            </div>
+            <div class="col-2">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="search" placeholder="поиск..."/>
+                </div><!-- input-group -->
+            </div>
         </div>
-        <div class="card-body">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Название</th>
-                    <th>Избранное</th>
-                    <th>Опубликовано</th>
-                    <th>Дата создания</th>
-                    <th>Действия</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% if object_list.count == 0 %}
-                    <tr>
-                        <td colspan="5" class="text-center">
-                            <h3 class="text-muted">Пока нет ни одной заметки</h3>
-                        </td>
-                    </tr>
-                {% else %}
-                    {% for object in object_list %}
-                        <tr>
-                            <td>
-                                <a href="{% url 'notes:detail' object.pk %}" class="btn btn-link">
-                                    {{ object.title }}
-                                </a>
-                            </td>
-                            <td>
-                                {% if object.favorites %}
-                                    <i class="fa fa-minus text-warning"></i>
-                                {% else %}
-                                    <i class="fa fa-star text-success"></i>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if object.published %}
-                                    <i class="fa fa-eye text-success"></i>
-                                {% else %}
-                                    <i class="fa fa-eye-slash text-warning"></i>
-                                {% endif %}
-                            </td>
-                            <td>{{ object.created_at|date:"d.m.Y H:i" }}</td>
-                            <td>
-                                <a href="{% url 'notes:update' object.pk %}">
-                                    <i title="Изменить" class="fa fa-edit"> </i>
-                                </a>
-                                <a href="{% url 'notes:delete' object.pk %}" class="ml-2">
-                                    <i title="Удалить" class="fa fa-trash text-danger"> </i>
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                {% endif %}
-                </tbody>
-            </table>
+
+        <div class="card-body table-responsive">
+            <div class="table-content">
+                {% include 'notes/includes/notes_ajax_list.html' %}
+            </div>
         </div>
     </div>
 {% endblock %}
@@ -93,7 +90,67 @@
     <script src="{% static 'libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js' %}"></script>
     <script>
         $(document).ready(function () {
-            $('.table').dataTable({})
+            $('input[name=date-to]').change(function () {
+                searchByFields()
+            })
+            $('input[name=date-from]').change(function () {
+                searchByFields()
+            })
+            $('select[name=category]').change(function () {
+                searchByFields()
+            })
+            $('select[name=published]').change(function () {
+                searchByFields()
+            })
+            $('select[name=favorites]').change(function () {
+                searchByFields()
+            })
+            $('input[name=search]').keyup(function () {
+                searchByFields()
+            })
+            $('.table-content').on('click', '#datatable-buttons_paginate .paginate_button', function () {
+                togglePreloader()
+                let dateFrom = $('input[name=date-from]').val()
+                let dateTo = $('input[name=date-to]').val()
+                let search = $('input[name=search]').val()
+                let favorites = $('select[name=favorites]').val()
+                let published = $('select[name=published]').val()
+                let category = $('select[name=category]').val()
+
+                var url = $(this).find('a').attr('href') + '&dfrom=' + dateFrom + '&dto=' + dateTo + '&search=' + search + '&favorites=' + favorites + '&published=' + published + '&category=' + category;
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        $('.table-content').html(data)
+                        togglePreloader()
+                        return false;
+                    }
+                })
+                return false;
+            })
+
+            function searchByFields() {
+                togglePreloader()
+
+                let dateFrom = $('input[name=date-from]').val()
+                let dateTo = $('input[name=date-to]').val()
+                let search = $('input[name=search]').val()
+                let favorites = $('select[name=favorites]').val()
+                let published = $('select[name=published]').val()
+                let category = $('select[name=category]').val()
+
+                var url = '?dfrom=' + dateFrom + '&dto=' + dateTo + '&search=' + search + '&favorites=' + favorites + '&published=' + published + '&category=' + category;
+                $.ajax({
+                    url: url,
+                    success: function (data) {
+                        $('.table-content').html(data)
+                        togglePreloader()
+                        return false;
+                    }
+                })
+                return false;
+            }
+
         })
     </script>
 {% endblock %}

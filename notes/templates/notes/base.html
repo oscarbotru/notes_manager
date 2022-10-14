@@ -9,12 +9,42 @@
     <link rel="icon" href="{% static 'favicon.png' %}">
     <title>{{ title|default:'Заметки' }} - ManNot</title>
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+          integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
     {% block ext_css %}
     {% endblock %}
 </head>
 
 <body class="">
+<style>
+    #preloader {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0px;
+        left: 0px;
+        z-index: 1000;
+        background-color: rgba(255, 255, 255, 0.5) !important;
+        text-align: center;
+        padding-top: 25%;
+        display: none;
+    }
+</style>
+<div id="preloader">
+    {#<lottie-player id="firstLottie" src="{% static 'face/preloader.json' %}" style="width:400px; height: 400px;"></lottie-player>#}
+    <lottie-player
+            autoplay
+            loop
+            mode="normal"
+            src="{% static 'preloader.json' %}"
+            style="width: 100px; margin: 0 auto;"
+    >
+    </lottie-player>
+</div>
+<script src="https://unpkg.com/@lottiefiles/lottie-interactivity@latest/dist/lottie-interactivity.min.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@0.4.0/dist/tgs-player.js"></script>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="{% url 'notes:list' %}">Заметки</a>
 
@@ -34,6 +64,17 @@
     </div>
 </div>
 <script src="{% static 'libs/jquery/jquery.min.js' %}"></script>
+<script>
+    function togglePreloader() {
+        if ($('#preloader').css('display') === 'block') {
+            $('#preloader').css('display', 'none')
+        } else {
+            $('#preloader').css('display', 'block')
+        }
+
+    }
+
+</script>
 {% block ext_js %}
 {% endblock %}
 </body>
