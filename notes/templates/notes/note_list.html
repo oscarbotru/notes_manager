@@ -1,0 +1,99 @@
+{% extends 'notes/base.html' %}
+
+{% block ext_css %}
+    {% load static %}
+    <!-- jquery.vectormap css -->
+    <link href="{% static 'libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css' %}" rel="stylesheet"
+          type="text/css"/>
+
+    <!-- DataTables -->
+    <link href="{% static 'libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css' %}" rel="stylesheet"
+          type="text/css"/>
+
+    <!-- Responsive datatable examples -->
+    <link href="{% static 'libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css' %}" rel="stylesheet"
+          type="text/css"/>
+
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <a href="{% url 'notes:create' %}" class="btn btn-primary float-right">
+                Добавить заметку
+            </a>
+            <h4 class="card-title">Список заметок</h4>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Избранное</th>
+                    <th>Опубликовано</th>
+                    <th>Дата создания</th>
+                    <th>Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if object_list.count == 0 %}
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            <h3 class="text-muted">Пока нет ни одной заметки</h3>
+                        </td>
+                    </tr>
+                {% else %}
+                    {% for object in object_list %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'notes:detail' object.pk %}" class="btn btn-link">
+                                    {{ object.title }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if object.favorites %}
+                                    <i class="fa fa-minus text-warning"></i>
+                                {% else %}
+                                    <i class="fa fa-star text-success"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if object.published %}
+                                    <i class="fa fa-eye text-success"></i>
+                                {% else %}
+                                    <i class="fa fa-eye-slash text-warning"></i>
+                                {% endif %}
+                            </td>
+                            <td>{{ object.created_at|date:"d.m.Y H:i" }}</td>
+                            <td>
+                                <a href="{% url 'notes:update' object.pk %}">
+                                    <i title="Изменить" class="fa fa-edit"> </i>
+                                </a>
+                                <a href="{% url 'notes:delete' object.pk %}" class="ml-2">
+                                    <i title="Удалить" class="fa fa-trash text-danger"> </i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block ext_js %}
+    {% load static %}
+    <!-- Required datatable js -->
+    <script src="{% static 'libs/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+
+    <!-- Responsive examples -->
+    <script src="{% static 'libs/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $('.table').dataTable({})
+        })
+    </script>
+{% endblock %}

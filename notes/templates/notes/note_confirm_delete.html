@@ -1,0 +1,18 @@
+{% extends 'notes/base.html' %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Удаление заметки</h4>
+        </div>
+        <div class="card-body">
+            <p>Уверены, что хотите удалить заметку "{{ object.title }}"?</p>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'notes:list' %}" class="btn btn-dark float-right">Отмена</a>
+            <form method="post">
+                <input type="submit" class="btn btn-danger" value="Удалить">
+            </form>
+        </div>
+    </div>
+{% endblock %}

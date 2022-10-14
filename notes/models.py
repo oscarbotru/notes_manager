@@ -24,6 +24,7 @@ class Note(models.Model):
 
     category = models.ForeignKey(NoteCategory, on_delete=models.CASCADE, verbose_name='Категория')
     favorites = models.BooleanField(default=False, verbose_name='Избранное')
+    published = models.BooleanField(default=False, verbose_name='Опубликовано')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец заметки')
 
     # Хорошим тоном является не удаление сущности, а отметка о неиспользовании

@@ -1,0 +1,53 @@
+{% extends 'notes/base.html' %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Информация о заметке</h3>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <tr>
+                    <td>Название</td>
+                    <td>{{ object.title }}</td>
+                </tr>
+                <tr>
+                    <td>Содержимое</td>
+                    <td>{{ object.body|safe }}</td>
+                </tr>
+                <tr>
+                    <td>В избранном</td>
+                    <td>
+                        {% if object.favorites %}
+                            <span class="text-success">В избранном</span>
+                        {% else %}
+                            <span class="text-info">Не в избранном</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Опубликовано</td>
+                    <td>
+                        {% if object.published %}
+                            <span class="text-success">Опубликовано</span>
+                        {% else %}
+                            <span class="text-info">Не опубликовано</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Дата создания</td>
+                    <td>{{ object.created_at|date:"d.m.Y H:i" }}</td>
+                </tr>
+                <tr>
+                    <td>Дата последнего изменения</td>
+                    <td>{{ object.updated_at|date:"d.m.Y H:i" }}</td>
+                </tr>
+            </table>
+        </div>
+    <div class="card-footer">
+        <a href="{% url 'notes:list' %}" class="btn btn-dark float-right">Назад</a>
+        <a href="{% url 'notes:update' object.pk %}" class="btn btn-primary">Изменить</a>
+    </div>
+    </div>
+{% endblock %}
