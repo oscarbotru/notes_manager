@@ -7,5 +7,5 @@
     <label for="inputPassword" class="sr-only">Пароль</label>
     <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Пароль" required>
     <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
-    <a href="#">Зарегистрироваться</a>
+    <a class="btn btn-link mt-3" href="{% url 'users:register' %}">Зарегистрироваться</a>
 {% endblock %}

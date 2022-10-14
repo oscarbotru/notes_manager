@@ -1,10 +1,7 @@
 {% extends 'users/base.html' %}
 
 {% block content %}
-    <h1 class="h3 mb-3 font-weight-normal">Зарегистрируйтесь</h1>
-    <label for="inputUsername" class="sr-only">Имя пользователя</label>
-    <input type="text" id="inputUsername" name="username" class="form-control" placeholder="Имя пользователя" required autofocus>
-    <label for="inputPassword" class="sr-only">Пароль</label>
-    <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Пароль" required>
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
+    {{ form.as_p }}
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Зарегистрироваться</button>
+    <a class="btn btn-link mt-3" href="{% url 'users:login' %}">Войти</a>
 {% endblock %}

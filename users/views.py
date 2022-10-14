@@ -1,5 +1,9 @@
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
+from django.views.generic import CreateView, TemplateView
+
+from users.forms import UserRegisterForm
 
 
 class UserLoginView(LoginView):
@@ -17,20 +21,19 @@ class UserLogoutView(LogoutView):
     next_page = reverse_lazy('users:login')
 
 
-# class UserRegisterView(SuccessMessageMixin, CreateView):
-#     template_name = 'users/register.html'
-#     success_url = reverse_lazy('users:register_success')
-#     form_class = UserRegisterForm
-#     success_message = "Пользователь успешно зарегистрирован. Дождитесь пароль."
-#
-#     extra_context = {
-#         'title': 'Регистрация'
-#     }
-#
-#     def form_valid(self, form):
-#         self.object = form.save()
-#         send_code_to_email_or_phone(self.object)
-#         response = redirect(self.get_success_url())
-#         response.set_cookie('current_user_pk', self.object.pk)
-#         return response
-#
+class UserRegisterView(SuccessMessageMixin, CreateView):
+    template_name = 'users/register.html'
+    success_url = reverse_lazy('users:register_success')
+    form_class = UserRegisterForm
+
+    extra_context = {
+        'title': 'Регистрация'
+    }
+
+
+class UserSuccessRegisterView(TemplateView):
+    template_name = 'users/register_success.html'
+
+    extra_context = {
+        'title': 'Успешная регистрация'
+    }
