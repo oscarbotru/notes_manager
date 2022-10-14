@@ -1,0 +1,12 @@
+.DS_Store
+.vscode/
+*.pyc
+.idea/
+*.geany
+/base/languages/
+static/admin
+*/__pycache__/
+venv/
+env/
+.env
+/media
